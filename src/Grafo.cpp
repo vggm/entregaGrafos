@@ -25,7 +25,7 @@ void Grafo::CargarDatos() {
     string vertice, lineaVacia;
     string campo[3];
 
-    map<string,int> mapa;
+    
 
     ifstream archivo;
     archivo.open("Datos.in", ios::in);
@@ -37,7 +37,7 @@ void Grafo::CargarDatos() {
             
             archivo >> vertice; 
             Cjtovertices[i] = vertice;
-            mapa[vertice] = i;
+            mapaVertices[vertice] = i;
             ocupados++;
         }
         
@@ -51,8 +51,8 @@ void Grafo::CargarDatos() {
             getline(archivo,campo[2],'\n');
 
 
-            int origen  = mapa[campo[0]];
-            int destino = mapa[campo[1]];
+            int origen  = mapaVertices[campo[0]];
+            int destino = mapaVertices[campo[1]];
             MatAdyacencia[origen][destino] = stof(campo[2]);
         }
 
@@ -71,15 +71,18 @@ void Grafo::MostrarDatos(float Matriz[MAX][MAX]) {
         for (int j = 0; j < ocupados; j++)
         {
             float dato = MatAdyacencia[i][j];
-            
+            string mostrar;
+
             if (dato == 9999)
-                
-            if (dato == -1)
-
+                mostrar = "  n  ";
+            else if (dato == -1)
+                mostrar = "  -1 ";
             else
+                mostrar = to_string(dato).substr(0,5);
 
+            cout << " " << mostrar << " ";
         }
-        std::cout << endl;
+        cout << endl;
     }
 }
 

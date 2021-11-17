@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <unordered_map>
 
 using namespace std;
 
@@ -18,10 +19,13 @@ static const int MAX = 20;    //Constante de valor 20, es de utilidad ya que se 
 
 class Grafo {
 
-	int ocupados;					  //Número de nodos que tendrá nuestro Grafo
+	int    ocupados;				  //Número de nodos que tendrá nuestro Grafo
 	string Cjtovertices[MAX];    	  //Conjunto de nodos (vértices) que tendrá nuestro Grafo
-	float MatAdyacencia[MAX][MAX];    //Conjunto de aristas valuadas  que tendrá nuestro Grafo, (Matriz de Adyacencia)
-	
+	unordered_map<string,int> mapaVertices;
+	float  MatAdyacencia[MAX][MAX];   //Conjunto de aristas valuadas  que tendrá nuestro Grafo, (Matriz de Adyacencia)
+	float  MFloyd[MAX][MAX];
+	int    MatP[MAX][MAX];
+
 /********************************************************************************
 /*	De esta forma tienes lo imprescindible para un grafo; los vértices y las aristas.
 /*	Deberás añadir más matrices, si lo consideras necesario para resolver el ejercicio.
@@ -65,7 +69,17 @@ public:
 
 	void MostrarMatriz();
 
+	void insertarNodo(string Nodo);
 
+	void insertarArco(string origen, string destino);
+
+	bool pertenece(string nombre);
+
+	float arco(string origen, string destino);
+
+	void adyacentes(string nodo, float lista[MAX]);
+
+	void Floyd();
 
 
 
