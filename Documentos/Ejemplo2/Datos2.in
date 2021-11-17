@@ -1,0 +1,57 @@
+15
+Santiago
+Oviedo
+Santander
+Vitoria
+Pamplona
+Barcelona
+Valladolid
+Logroño
+Zaragoza
+Madrid
+Toledo
+Mérida
+Valencia
+Murcia
+Sevilla
+
+27
+Mérida Sevilla 192
+Mérida Toledo 301
+Mérida Madrid 337
+Mérida Valladolid 396
+Sevilla Madrid 529
+Sevilla Murcia 523
+Sevilla Toledo 477
+Toledo Madrid 75
+Toledo Valencia 371
+Valencia Murcia 227
+Valencia Madrid 360
+Valencia Zaragoza 309
+Zaragoza Barcelona 312
+Zaragoza Logroño 170
+Zaragoza Madrid 321
+Barcelona Pamplona 480
+Pamplona Vitoria 98
+Pamplona Logroño 86
+Vitoria Logroño 63
+Vitoria Santander 162
+Santander Oviedo 192
+Santander Valladolid 254
+Oviedo Santiago 329
+Santiago Valladolid 448
+Valladolid Madrid 191
+Valladolid Logroño 256
+Logroño Madrid 333
+
+10
+Santiago Sevilla
+Mérida Barcelona
+Murcia Pamplona
+Madrid Murcia
+Zaragoza Oviedo
+Logroño Barcelona
+Madrid Santander
+Vitoria Toledo
+Valencia Mérida
+Pamplona Toledo
