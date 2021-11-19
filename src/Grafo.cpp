@@ -6,6 +6,10 @@ using namespace std;
 
 Grafo::Grafo () {
     numVertices = 0;
+
+    for (int i = 0; i < MAX; i++)
+        Cjtovertices[i] = '\0';
+
     for (int i = 0; i < MAX; i++)
         for (int j = 0; j < MAX; j++) 
 
@@ -16,7 +20,6 @@ Grafo::Grafo () {
 
     for (int i = 0; i < MAX; i++)
         for (int j = 0; j < MAX; j++) 
-
             if (i != j)
                 MFloyd[i][j] = 9999;
             else
@@ -24,12 +27,8 @@ Grafo::Grafo () {
 
     for (int i = 0; i < MAX; i++)
         for (int j = 0; j < MAX; j++)
-            MatP[i][j] = 0;
+            MatP[i][j] = -1;
         
-        
-    
-    
-    
     CargarDatos();
 }
 
@@ -37,6 +36,7 @@ void Grafo::CargarDatos() {
     int n, d, p;
     string vertice, lineaVacia;
     string campo[3];
+    string org, dst;
 
 	map<string,int> mapaVertices;
 
@@ -44,7 +44,10 @@ void Grafo::CargarDatos() {
     ifstream archivo;
     archivo.open("Datos.in", ios::in);
 
-    if (archivo.is_open()) 
+    ofstream salida;
+    salida.open("Datos.out", ios::trunc);
+
+    if (archivo.is_open() && salida.is_open()) 
     {
         archivo >> n; // Obtenemos el número de elementos con los que vamos a trabajar
         for (int i = 0; i < n; i++) { // Obtenemos el conjunto de elementos con los que vamos a trabajar
@@ -55,31 +58,43 @@ void Grafo::CargarDatos() {
             numVertices++;
         }
         
-        getline(archivo, lineaVacia);
 
         archivo >> d; // Obtenemos el número de adyacencias
         for (int i = 0; i < d; i++)
         {   
-            getline(archivo,campo[0],' ');
-            getline(archivo,campo[1],' ');
-            getline(archivo,campo[2],'\n');
+            for (int j = 0; j < 3; j++)
+                archivo >> campo[j];
 
 
             int origen  = mapaVertices[campo[0]];
             int destino = mapaVertices[campo[1]];
-            int kms     = stof(campo[2]);
+            float kms   = stof(campo[2]);
             MatAdyacencia[origen][destino] = kms; // Asignamos la distancia entre dos ciudades
             MatAdyacencia[destino][origen] = kms; // Es la misma distancia desde el origen al destino como del destino al origen
 
-            // La matriz de Floyd, en un principio tendrá lo mismos valores que la Matriz de Adyacencia
+            // La matriz de Floyd, al principio tendrá lo mismos valores que la Matriz de Adyacencia
             MFloyd[origen][destino] = kms; 
             MFloyd[destino][origen] = kms; 
         }
+
+        // Una vez recogidas todas las distancias, creamos la matriz de floyd
         this->makeFloyd();
-        getline(archivo, lineaVacia);
 
-        archivo >> p;
+        archivo >> p; // Número de consultas que haremos
+        for (int i = 0; i < p; i++)
+        {
+            archivo >> org;
+            archivo >> dst;
 
+            int origen = mapaVertices[org];
+            int destino= mapaVertices[dst];
+
+            salida << org << " ";
+            this->camino(origen,destino,salida);
+            salida << dst << " " << MFloyd[origen][destino] << endl;
+        }
+        
+        salida.close();
         archivo.close();
     }
     
@@ -117,9 +132,21 @@ void Grafo::makeFloyd() {
 						newResult = MFloyd[j][i] + MFloyd[i][k];
 						if (newResult < MFloyd[j][k]) {
 							MFloyd[j][k] = newResult;
-							MatP[j][k]= i+1;
+							MatP[j][k]= i;
 						}
 					}	
+}
+
+void Grafo::camino(int origen, int destino, ofstream &s) {
+    int k;
+    k = MatP[origen][destino];
+
+    if (k != -1)
+    {
+        camino(origen,k,s);
+        s << Cjtovertices[k] << " ";
+        camino(k,destino,s);
+    }
 }
 
 void Grafo::MostrarMatriz() {
@@ -137,7 +164,10 @@ void Grafo::MostrarMatP() {
     for (int i = 0; i < numVertices; i++) 
     {
         for (int j = 0; j < numVertices; j++)
-            cout << MatP[i][j] << " ";
+            if (MatP[i][j] == -1)
+                cout << "-1 ";
+            else
+                cout << " " << MatP[i][j] << " ";
         cout << endl;
     }
 }

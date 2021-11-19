@@ -30,6 +30,7 @@ class Grafo {
 /*	Son las matrices que resultan de aplicar los diferentes algoritmos que vayas necesitando.
 /**********************************************************************************************************/
 	void makeFloyd ();
+	void camino (int origen, int destino, ofstream &salida);
 
 public:
 
