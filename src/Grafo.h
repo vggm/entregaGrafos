@@ -31,6 +31,7 @@ class Grafo {
 /**********************************************************************************************************/
 	void makeFloyd ();
 	void camino (int origen, int destino, ofstream &salida);
+	int  minimo (float lista[MAX]);
 
 public:
 
@@ -75,9 +76,11 @@ public:
 
 	void insertarNodo(string Nodo);
 
-	void insertarArco(string origen, string destino);
+	void insertarArco(string origen, string destino, float valor);
 
 	bool pertenece(string nombre);
+
+	bool pertenece(string nombre, int &pos);
 
 	float arco(string origen, string destino);
 

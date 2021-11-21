@@ -149,6 +149,15 @@ void Grafo::camino(int origen, int destino, ofstream &s) {
     }
 }
 
+int Grafo::minimo(float lista[MAX]) {
+    int min = 0;
+    for (int i = 0; i < numVertices; i++)
+        if (lista[i] != -1 && lista[i] < lista[min])
+            min = i;
+    
+    return min;
+}
+
 void Grafo::MostrarMatriz() {
     cout << "--- Mostrando Matriz de Adyacencia ---" << endl;
     MostrarDatos(MatAdyacencia);
@@ -170,4 +179,48 @@ void Grafo::MostrarMatP() {
                 cout << " " << MatP[i][j] << " ";
         cout << endl;
     }
+}
+
+bool Grafo::pertenece (string nombre) {
+    int i = 0;
+    while (i < numVertices)
+        if (Cjtovertices[i] == nombre)
+            return true;
+
+    return false;   
+}
+
+bool Grafo::pertenece(string nombre, int &pos) {
+    int i = 0;
+    while (i < numVertices)
+        if (Cjtovertices[i] == nombre) {
+            pos = i;
+            return true;
+        }
+
+    return false;   
+}
+
+void Grafo::insertarNodo(string Nodo) {
+    Cjtovertices[numVertices] = Nodo;
+    numVertices++;
+}
+
+void Grafo::insertarArco(string origen, string destino, float valor) {
+    int org, dst;
+    if (pertenece(origen,org) && pertenece(destino,dst))
+        MatAdyacencia[org][dst] = valor;
+}
+
+float Grafo::arco(string origen, string destino) {
+    int org, dst;
+    if (pertenece(origen,org) && pertenece(destino,dst))
+        return MatAdyacencia[org][dst];
+}
+
+void Grafo::adyacentes(string nodo, float lista[MAX]) {
+    int pos;
+    if (pertenece(nodo,pos))
+        for (int i = 0; i < numVertices; i++)
+            lista[i] = MatAdyacencia[pos][i];
 }
