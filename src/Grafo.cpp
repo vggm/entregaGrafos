@@ -1,11 +1,10 @@
 #include "Grafo.h"
-#include <fstream>
-#include <iostream>
 #include <map>
 using namespace std;
 
 Grafo::Grafo () {
     numVertices = 0;
+    numArcos = 0;
 
     for (int i = 0; i < MAX; i++)
         Cjtovertices[i] = '\0';
@@ -28,8 +27,6 @@ Grafo::Grafo () {
     for (int i = 0; i < MAX; i++)
         for (int j = 0; j < MAX; j++)
             MatP[i][j] = -1;
-        
-    CargarDatos();
 }
 
 void Grafo::CargarDatos() {
@@ -81,17 +78,41 @@ void Grafo::CargarDatos() {
         this->makeFloyd();
 
         archivo >> p; // Número de consultas que haremos
+        string inicio[p];
+        string fin[p];
         for (int i = 0; i < p; i++)
         {
-            archivo >> org;
-            archivo >> dst;
+            archivo >> inicio[i];
+            archivo >> fin[i];
+        }
 
-            int origen = mapaVertices[org];
-            int destino= mapaVertices[dst];
+        for (int i = 0; i < p; i++)
+        {
+            int origen = mapaVertices[inicio[i]];
+            int destino= mapaVertices[fin[i]];
 
-            salida << org << " ";
+            salida << inicio[i] << " ";
             this->camino(origen,destino,salida);
-            salida << dst << " " << MFloyd[origen][destino] << endl;
+            salida << fin[i] << " " << MFloyd[origen][destino] << endl;
+        }
+        
+        salida << "\n"; 
+
+        float kmsTotal = 0;
+        this->limpiarMatP();
+        this->makeKruskal(kmsTotal);
+        this->makeFloyd();
+
+        salida << kmsTotal << endl;
+
+        for (int i = 0; i < p; i++)
+        {
+            int origen = mapaVertices[inicio[i]];
+            int destino= mapaVertices[fin[i]];
+
+            salida << inicio[i] << " ";
+            this->camino(origen,destino,salida);
+            salida << fin[i] << " " << MFloyd[origen][destino] << endl;
         }
         
         salida.close();
@@ -149,15 +170,6 @@ void Grafo::camino(int origen, int destino, ofstream &s) {
     }
 }
 
-int Grafo::minimo(float lista[MAX]) {
-    int min = 0;
-    for (int i = 0; i < numVertices; i++)
-        if (lista[i] != -1 && lista[i] < lista[min])
-            min = i;
-    
-    return min;
-}
-
 void Grafo::MostrarMatriz() {
     cout << "--- Mostrando Matriz de Adyacencia ---" << endl;
     MostrarDatos(MatAdyacencia);
@@ -181,46 +193,70 @@ void Grafo::MostrarMatP() {
     }
 }
 
-bool Grafo::pertenece (string nombre) {
-    int i = 0;
-    while (i < numVertices)
-        if (Cjtovertices[i] == nombre)
-            return true;
+void Grafo::makeKruskal(float &kmsTotal) {
+	int visitados[MAX];
+    float nuevoRecorrido[MAX][MAX];
 
-    return false;   
-}
+    for (int i = 0; i < MAX; i++) {
+        for (int j = 0; j < MAX; j++) {
 
-bool Grafo::pertenece(string nombre, int &pos) {
-    int i = 0;
-    while (i < numVertices)
-        if (Cjtovertices[i] == nombre) {
-            pos = i;
-            return true;
+            if (j == i)
+                nuevoRecorrido[i][j] = -1;
+            else
+                nuevoRecorrido[i][j] = 9999;
         }
+    }
+    
 
-    return false;   
+	for (int i = 1; i < MAX; i++)
+		visitados[i] = i;
+
+	int nodos = 1, org, dst;
+
+	while (nodos < numVertices) {
+		float minimo;
+
+		minimo = arcoMinimo(org,dst,visitados);
+
+		if (visitados[org] != visitados[dst]) {
+            kmsTotal += minimo;
+			nuevoRecorrido[org][dst] = minimo;
+			nuevoRecorrido[dst][org] = minimo;
+
+			int aux = visitados[dst];
+			visitados[dst] = visitados[org];
+			for (int i = 0; i < numVertices; i++)
+				if (visitados[i] == aux)
+					visitados[i] = visitados[org];
+
+			nodos++;
+		}
+	}
+
+    copiarMatriz(nuevoRecorrido);
 }
 
-void Grafo::insertarNodo(string Nodo) {
-    Cjtovertices[numVertices] = Nodo;
-    numVertices++;
+
+float Grafo::arcoMinimo (int &org, int &dst, int visitados[MAX]) {
+    float min = 9999;
+    for (int i = 0; i < numVertices; i++)
+        for (int j = 0; j < numVertices; j++)
+            if (min > MatAdyacencia[i][j] && MatAdyacencia[i][j] != 0 && visitados[i] != visitados[j]) {
+                min = MatAdyacencia[i][j];
+                org = i;
+                dst = j;
+            }
+    return min;
 }
 
-void Grafo::insertarArco(string origen, string destino, float valor) {
-    int org, dst;
-    if (pertenece(origen,org) && pertenece(destino,dst))
-        MatAdyacencia[org][dst] = valor;
+void Grafo::copiarMatriz (float m[MAX][MAX]) {
+    for (int i = 0; i < MAX; i++)
+        for (int j = 0; j < MAX; j++)
+            MFloyd[i][j] = m[i][j];
 }
 
-float Grafo::arco(string origen, string destino) {
-    int org, dst;
-    if (pertenece(origen,org) && pertenece(destino,dst))
-        return MatAdyacencia[org][dst];
-}
-
-void Grafo::adyacentes(string nodo, float lista[MAX]) {
-    int pos;
-    if (pertenece(nodo,pos))
-        for (int i = 0; i < numVertices; i++)
-            lista[i] = MatAdyacencia[pos][i];
+void Grafo::limpiarMatP () {
+    for (int i = 0; i < MAX; i++)
+        for (int j = 0; j < MAX; j++)
+            MatP[i][j] = -1;
 }

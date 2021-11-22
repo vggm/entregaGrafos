@@ -1,7 +1,8 @@
 /*
  * Grafo.h
  *
- *Indica el/los nombre/s del/los autor/es
+ * Víctor González Morales
+ * Eduardo Peña 
  *  
  */
 
@@ -11,6 +12,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <vector>
 
 using namespace std;
 
@@ -18,21 +20,23 @@ static const int MAX = 20;    //Constante de valor 20, es de utilidad ya que se 
 
 class Grafo {
 
-	int    numVertices;				  //Número de nodos que tendrá nuestro Grafo
-	string Cjtovertices[MAX];    	  //Conjunto de nodos (vértices) que tendrá nuestro Grafo
-	float  MatAdyacencia[MAX][MAX];   //Conjunto de aristas valuadas  que tendrá nuestro Grafo, (Matriz de Adyacencia)
-	float  MFloyd[MAX][MAX];
-	int    MatP[MAX][MAX];
+	int    numVertices;				  //Numero de nodos que tendra nuestro Grafo
+	int    numArcos;				  //Numero de arcos que tendra nuestro Grafo
+	string Cjtovertices[MAX];    	  //Conjunto de nodos (vértices) que tendra nuestro Grafo
+	float  MatAdyacencia[MAX][MAX];   //Conjunto de aristas valuadas  que tendra nuestro Grafo, (Matriz de Adyacencia)
+	float  MFloyd[MAX][MAX];		  //Conjunto de aristas valuadas tras haber realizado Floyd o Kruskal
+	int    MatP[MAX][MAX];			  //Matriz resultante de haber hecho Floyd
 
 /********************************************************************************
 /*	De esta forma tienes lo imprescindible para un grafo; los vértices y las aristas.
 /*	Deberás añadir más matrices, si lo consideras necesario para resolver el ejercicio.
 /*	Son las matrices que resultan de aplicar los diferentes algoritmos que vayas necesitando.
 /**********************************************************************************************************/
-	void makeFloyd ();
+	
 	void camino (int origen, int destino, ofstream &salida);
-	int  minimo (float lista[MAX]);
-
+	float arcoMinimo (int &org, int &dst, int visitados[MAX]);
+	void copiarMatriz (float m[MAX][MAX]);
+	void limpiarMatP ();
 public:
 
 	/*
@@ -68,26 +72,41 @@ public:
 	 */
 	void MostrarDatos(float matriz[MAX][MAX]);
 
+	/*
+	 * PRE: {La estructuras del grafo han de estar correctamente definidas, inicializadas y cargadas}
+	 * POST: {Muestra la matriz que se indica como parámetro de entrada.
+	 * Complejidad: O(n^2)
+	 */
 	void MostrarMatriz();
 
+	/*
+	 * PRE: {La estructuras del grafo han de estar correctamente definidas, inicializadas y cargadas}
+	 * POST: {Muestra la matriz que se indica como parámetro de entrada.
+	 * Complejidad: O(n^2)
+	 */
 	void Floyd();
 
+	/*
+	 * PRE: {La estructuras del grafo han de estar correctamente definidas, inicializadas y cargadas}
+	 * POST: {Muestra la matriz que se indica como parámetro de entrada.
+	 * Complejidad: O(n^2)
+	 */
 	void MostrarMatP();
 
-	void insertarNodo(string Nodo);
+	/*
+	 * PRE: {La estructuras del grafo han de estar correctamente definidas, inicializadas y cargadas}
+	 * POST: {Almacena en MFloyd la matriz resultante de realizar Floyd}
+	 * Complejidad: O(n^3)
+	 */
+	void makeFloyd ();
 
-	void insertarArco(string origen, string destino, float valor);
-
-	bool pertenece(string nombre);
-
-	bool pertenece(string nombre, int &pos);
-
-	float arco(string origen, string destino);
-
-	void adyacentes(string nodo, float lista[MAX]);
-
+	/*
+	 * PRE: {La estructuras del grafo han de estar correctamente definidas, inicializadas y cargadas}
+	 * POST: {Almacena en MFloyd la matriz resultante de realizar Kruskal}
+	 * Complejidad: O(n^3)
+	 */
+	void makeKruskal(float &kmsTotal);
 	
-
 
 
 };
